@@ -1,16 +1,17 @@
 <script setup>
-import { ref, onMounted, onUnmounted } from "vue";
+import { ref, onMounted, onUnmounted, watchEffect } from "vue";
 import { useRoute } from "vue-router";
 import { io } from "socket.io-client";
 
 const route = useRoute();
-const username = ref(route.params.username);
+const username = ref();
 const socket = io("http://localhost:5000");
 
 const message = ref("");
 const messages = ref([]);
 
 onMounted(() => {
+  username.value = route.query.username || 'Guest';
   console.log("Socket connected:", socket.connected);
 
   socket.on("connect", () => {
@@ -41,11 +42,16 @@ onUnmounted(() => {
 
 const sendMessage = () => {
   if (message.value.trim() !== "") {
-    console.log("Sending message:", message.value);
-    socket.emit("message", message.value);
+    const chatMessage = {
+      username: username.value,
+      text: message.value,
+    };
+    console.log("Sending message:", chatMessage);
+    socket.emit("message", chatMessage);
     message.value = "";
   }
 };
+
 </script>
 
 <template>
@@ -53,8 +59,11 @@ const sendMessage = () => {
     <h2>Chat App</h2>
     <input v-model="message" @keyup.enter="sendMessage" placeholder="Type a message..." />
     <ul>
-      <li v-for="(msg, index) in messages" :key="index">{{ msg }}</li>
-    </ul>
+  <li v-for="(msg, index) in messages" :key="index">
+    <strong>{{ msg.username }}:</strong> {{ msg.text }}
+  </li>
+</ul>
+
   </div>
 </template>
 
