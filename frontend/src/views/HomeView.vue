@@ -53,47 +53,35 @@ const sendMessage = () => {
 };
 
 </script>
-
 <template>
-  <div class="chat-container">
-    <h2>Chat App</h2>
-    <input v-model="message" @keyup.enter="sendMessage" placeholder="Type a message..." />
-    <ul>
-  <li v-for="(msg, index) in messages" :key="index">
-    <strong>{{ msg.username }}:</strong> {{ msg.text }}
-  </li>
-</ul>
+  <div class="flex h-screen">
+    <div class="w-sm">this is the side bar</div>
+    <div class="flex-1">
+      <div class="flex flex-col p-4 bg-gray-100 h-full">
+        <h2 class="text-xl font-bold text-center mb-4">Chat App</h2>
 
+        <div class="flex flex-col flex-grow overflow-auto space-y-2 p-4 bg-white rounded-lg shadow-md">
+          <div v-for="(msg, index) in messages" :key="index" class="flex"
+            :class="{ 'justify-end': msg.username === username, 'justify-start': msg.username !== username }">
+            <div class="px-4 py-2 rounded-lg max-w-xs break-words" :class="{
+              'bg-blue-500 text-white  text-right': msg.username === username,
+              'bg-gray-300 text-black  text-left': msg.username !== username
+            }">
+              <span class="text-sm font-semibold block">{{ msg.username }}</span>
+              <span>{{ msg.text }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-4 flex">
+          <input v-model="message" @keyup.enter="sendMessage" placeholder="Type a message..."
+            class="flex-grow p-2 border-1 border-gray-500 rounded-l-lg focus:outline-none" />
+          <button @click="sendMessage" class="bg-blue-500 text-white px-4 py-2 rounded-r-lg hover:bg-blue-600">
+            Send
+          </button>
+        </div>
+      </div>
+
+    </div>
   </div>
 </template>
-
-<style scoped>
-.chat-container {
-  max-width: 400px;
-  margin: auto;
-  padding: 20px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  background-color: #f9f9f9;
-}
-
-input {
-  width: 100%;
-  padding: 8px;
-  margin-bottom: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-
-li {
-  background: #e1f5fe;
-  padding: 8px;
-  margin-bottom: 5px;
-  border-radius: 4px;
-}
-</style>
